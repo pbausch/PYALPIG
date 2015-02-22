@@ -33,7 +33,7 @@ def process(file,blur,detail,trialpha):
 	pts[:,0] = corners[:, 1]
 	pts[:,1] = corners[:, 0]
 	
-	# random points
+	# random points (square image)
 	#pts = np.random.random_integers(w, size=(1000,2))
 		
 	triangles = Delaunay(pts)
