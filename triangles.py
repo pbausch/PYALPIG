@@ -26,11 +26,9 @@ def process(file,blur,detail,trialpha):
 	fig, ax = plt.subplots()
 	plt.gray()
 
-	# smaller means more detail
 	if (blur > 0):
 		img1 = gaussian_filter(img1, sigma=blur, multichannel=True)
 		
-	# corner_fast (more detail)
 	corners = corner_peaks(corner_fast(img1, detail), min_distance=1)
 	
 	pts = np.zeros((len(corners),2))
@@ -40,19 +38,12 @@ def process(file,blur,detail,trialpha):
 	triangles = Delaunay(pts)
 	triang = tri.Triangulation(corners[:, 1],corners[:, 0])
 
-	centers = np.sum(pts[triangles.vertices], axis=1, dtype='int')/3.0
-
 	pix = img.load()
-	colors = []
-	for i in centers:
-		colors.append(pix[i[0],i[1]])
 
 	ax.imshow(source)
 	ax.axis('off')
 	ax.axes.get_xaxis().set_visible(False)
 	ax.axes.get_yaxis().set_visible(False)
-
-	patches = []
 
 	for i in triangles.vertices:
 		triangle = pts[i]
@@ -75,7 +66,6 @@ def process(file,blur,detail,trialpha):
 		y = np.array([a[1],b[1],c[1]])
 		x = np.array([a[0],b[0],c[0]])
 		polygon = plt.Polygon(triangle, fill=True, color=color, alpha=trialpha, ec='none', aa=True)
-		patches.append(polygon)
 		plt.gca().add_patch(polygon)
 
 	plt.show()
