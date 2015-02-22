@@ -63,8 +63,6 @@ def process(file,blur,detail,trialpha):
 			G = colors[1] / 255.
 			B = colors[2] / 255.
 		color = [R,G,B]
-		y = np.array([a[1],b[1],c[1]])
-		x = np.array([a[0],b[0],c[0]])
 		polygon = plt.Polygon(triangle, fill=True, color=color, alpha=trialpha, ec='none', aa=True)
 		plt.gca().add_patch(polygon)
 
