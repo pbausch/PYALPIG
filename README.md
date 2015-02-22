@@ -5,7 +5,7 @@ usage: python triangles.py [image file]
 
 I know nothing about Python. This is my first Python script. It uses [scikit-image](http://scikit-image.org/) and [matplotlib](http://matplotlib.org/) to generate Low Poly art like the app [PolyGen](http://www.polygenapp.com/).
 
-The script extracts points from the picture, creates a Delaunay mesh, finds the center point of every triangle, extracts that color and then fills that triangle.
+The script extracts points from the picture, creates a Delaunay mesh, finds the center point of every triangle, extracts the color of that pixel, and then fills/plots that triangle with that color.
 
 I put something like this together in JavaScript--[YALPIG](https://github.com/pbausch/YALPIG)--and wanted something similar on the command line. I thought Python might work well for it.
 
