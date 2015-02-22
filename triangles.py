@@ -1,18 +1,16 @@
-from skimage import data
-from skimage import io as io
-from skimage.color import rgb2gray
-from skimage.filter import gaussian_filter
-import matplotlib.pyplot as plt
 import sys
-from skimage.feature import corner_fast, corner_peaks
-from PIL import Image, ImageOps, ImageDraw
-from skimage.util import img_as_ubyte
-import numpy as np
+import matplotlib.pyplot as plt
 import matplotlib.tri as tri
-from scipy.spatial import Delaunay
+import numpy as np
+from skimage import data
+from skimage import io
+from skimage.color import rgb2gray
 from skimage.draw import polygon, set_color
-from random import randint, uniform
-from matplotlib.collections import PatchCollection
+from skimage.feature import corner_fast, corner_peaks
+from skimage.filter import gaussian_filter
+from skimage.util import img_as_ubyte
+from PIL import Image, ImageOps, ImageDraw
+from scipy.spatial import Delaunay
 
 def process(file,blur,detail,trialpha):
 	img = Image.open(file)
@@ -34,9 +32,11 @@ def process(file,blur,detail,trialpha):
 	pts = np.zeros((len(corners),2))
 	pts[:,0] = corners[:, 1]
 	pts[:,1] = corners[:, 0]
-
+	
+	# random points
+	#pts = np.random.random_integers(w, size=(1000,2))
+		
 	triangles = Delaunay(pts)
-	triang = tri.Triangulation(corners[:, 1],corners[:, 0])
 
 	pix = img.load()
 
@@ -66,6 +66,8 @@ def process(file,blur,detail,trialpha):
 		polygon = plt.Polygon(triangle, fill=True, color=color, alpha=trialpha, ec='none', aa=True)
 		plt.gca().add_patch(polygon)
 
+	# plot points
+	#ax.scatter(pts[:,0], pts[:,1], s=1, color='g', alpha=1)
 	plt.show()
 
 # go (file, blur, detail, trialpha)
@@ -74,4 +76,4 @@ def process(file,blur,detail,trialpha):
 # a smaller detail number means more detail
 # setting trialpha to less than 1 means some of the source image will show
 
-process(sys.argv[1],0,4,1)
+process(sys.argv[1],0,1,1)
