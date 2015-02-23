@@ -40,7 +40,15 @@ def process(file,blur,detail,trialpha):
 
 	pix = img.load()
 
-	ax.imshow(source)
+	# set the size in inches (so we can save in pixels)
+	dpi = 72.
+	xinch = h / dpi
+	yinch = w / dpi
+	fig = plt.figure(figsize=(xinch,yinch))
+	ax = plt.axes([0., 0., 1., 1.], frameon=False, xticks=[],yticks=[])
+	ax.imshow(source, interpolation='none')
+
+	#ax.imshow(source)
 	ax.axis('off')
 	ax.axes.get_xaxis().set_visible(False)
 	ax.axes.get_yaxis().set_visible(False)
@@ -68,7 +76,10 @@ def process(file,blur,detail,trialpha):
 
 	# plot points
 	#ax.scatter(pts[:,0], pts[:,1], s=1, color='g', alpha=1)
-	plt.show()
+	#plt.show()
+	
+	# save file
+	plt.savefig('output.png', dpi=dpi, bbox_inches='tight', pad_inches = 0)
 
 # go (file, blur, detail, trialpha)
 #
