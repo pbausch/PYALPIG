@@ -11,7 +11,7 @@ I put something like this together in JavaScript--[YALPIG](https://github.com/pb
 
 To Do:
 
- * It's fairly slow. Plotting thousands of triangles with plt.Polygon in a loop takes a while. PatchCollections help.
+ * It's fairly slow. PatchCollections help with plotting thousands of polygons, but I wonder if there's a way to parallelize somehow.
  * I'd like to make this interactive like the JavaScript version so I can fiddle with knobs to get different results. I have no idea how to do that.
  * Instead of getting the color of the pixel at the center of the triangle, I'd like to try averaging all pixels within a triangle and using that for the Polygon. Again, no idea how to get the coordinates of every pixel within a triangle.
  * I'd like to be able to find the foreground and background of an image and only create the mesh in one or the other.
