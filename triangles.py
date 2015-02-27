@@ -1,6 +1,10 @@
 import sys
+import os.path
 import matplotlib.pyplot as plt
-import matplotlib.tri as tri
+import matplotlib.tri as mtri
+import matplotlib.colors as matcolors
+import matplotlib.cm as cmx
+from matplotlib.collections import PatchCollection
 import numpy as np
 from skimage import data
 from skimage import io
@@ -9,8 +13,15 @@ from skimage.draw import polygon, set_color
 from skimage.feature import corner_fast, corner_peaks
 from skimage.filter import gaussian_filter
 from skimage.util import img_as_ubyte
-from PIL import Image, ImageOps, ImageDraw
+from PIL import Image, ImageOps, ImageDraw, ImageFilter
 from scipy.spatial import Delaunay
+
+def tint_image(src, color="#FFFFFF"):
+    src.load()
+    r, g, b = src.split()
+    gray = ImageOps.grayscale(src)
+    result = ImageOps.colorize(gray, (0, 0, 0, 0), color) 
+    return result
 
 def process(file,blur,detail,trialpha):
 	img = Image.open(file)
@@ -24,35 +35,37 @@ def process(file,blur,detail,trialpha):
 	fig, ax = plt.subplots()
 	plt.gray()
 
+	# POINT EXTRACTION TWEAKS
+	
+	# blur image (fewer points)
 	if (blur > 0):
 		img1 = gaussian_filter(img1, sigma=blur, multichannel=True)
-		
-	corners = corner_peaks(corner_fast(img1, detail), min_distance=1)
 	
+	# extract points
+	corners = corner_peaks(corner_fast(img1, detail), min_distance=1)
+
 	pts = np.zeros((len(corners),2))
 	pts[:,0] = corners[:, 1]
 	pts[:,1] = corners[:, 0]
 	
-	# random points (square image)
-	#pts = np.random.random_integers(w, size=(1000,2))
+	# uncomment for random points instead (square image)
+	#pts = np.random.random_integers(w, size=(800,2))
 		
 	triangles = Delaunay(pts)
-
+	
+	# COLOR SELECTION TWEAKS
+	
+	# tint image
+	#img = tint_image(img,"#FF0000")
+	
+	# posterize image
+	#img = ImageOps.posterize(img,4)
+	
+	# blur image
+	#img = img.filter(ImageFilter.GaussianBlur(radius=10))
+	
 	pix = img.load()
-
-	# set the size in inches (so we can save in pixels)
-	dpi = 72.
-	xinch = h / dpi
-	yinch = w / dpi
-	fig = plt.figure(figsize=(xinch,yinch))
-	ax = plt.axes([0., 0., 1., 1.], frameon=False, xticks=[],yticks=[])
-	ax.imshow(source, interpolation='none')
-
-	#ax.imshow(source)
-	ax.axis('off')
-	ax.axes.get_xaxis().set_visible(False)
-	ax.axes.get_yaxis().set_visible(False)
-
+	patches = []
 	for i in triangles.vertices:
 		triangle = pts[i]
 		a = triangle[0]
@@ -71,15 +84,28 @@ def process(file,blur,detail,trialpha):
 			G = colors[1] / 255.
 			B = colors[2] / 255.
 		color = [R,G,B]
-		polygon = plt.Polygon(triangle, fill=True, color=color, alpha=trialpha, ec='none', aa=True)
-		plt.gca().add_patch(polygon)
+		patches.append(plt.Polygon(triangle, fill=True, color=color, alpha=1, ec='none', aa=True))
 
-	# plot points
+	ax.imshow(source)
+	ax.axis('off')
+	ax.axes.get_xaxis().set_visible(False)
+	ax.axes.get_yaxis().set_visible(False)
+
+	p = PatchCollection(patches, match_original=True)
+	ax.add_collection(p)
+
+	# plot extracted points
 	#ax.scatter(pts[:,0], pts[:,1], s=1, color='g', alpha=1)
 	#plt.show()
 	
-	# save file
-	plt.savefig('output.png', dpi=dpi, bbox_inches='tight', pad_inches = 0)
+	# new file name
+	name = os.path.splitext(file)[0]
+	newname = name + '_lp.png'
+	
+	# save + open file
+	plt.savefig(newname, dpi=170, bbox_inches='tight', pad_inches = 0)
+	command = "open " + newname
+	os.system(command)
 
 # go (file, blur, detail, trialpha)
 #
