@@ -23,7 +23,7 @@ def tint_image(src, color="#FFFFFF"):
     result = ImageOps.colorize(gray, (0, 0, 0, 0), color) 
     return result
 
-def process(file,blur,detail,trialpha):
+def process(file,blur,detail,size,trialpha):
 	img = Image.open(file)
 	img = ImageOps.expand(img,border=20,fill='white')
 	img = ImageOps.expand(img,border=5,fill='black')
@@ -42,7 +42,7 @@ def process(file,blur,detail,trialpha):
 		img1 = gaussian_filter(img1, sigma=blur, multichannel=True)
 	
 	# extract points
-	corners = corner_peaks(corner_fast(img1, detail), min_distance=1)
+	corners = corner_peaks(corner_fast(img1, detail), min_distance=size)
 
 	pts = np.zeros((len(corners),2))
 	pts[:,0] = corners[:, 1]
@@ -107,10 +107,11 @@ def process(file,blur,detail,trialpha):
 	command = "open " + newname
 	os.system(command)
 
-# go (file, blur, detail, trialpha)
+# go (file, blur, detail, size, trialpha)
 #
 # a larger blur means less detail
 # a smaller detail number means more detail
+# a smaller size number means smaller triangles
 # setting trialpha to less than 1 means some of the source image will show
 
-process(sys.argv[1],0,1,1)
+process(sys.argv[1],0,1,1,1)
