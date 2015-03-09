@@ -31,7 +31,7 @@ def save_plot(original,mplot,append):
 	newname = name + '_' + append + '.png'
 	
 	# save + open file
-	mplot.savefig(newname, dpi=130, bbox_inches='tight', pad_inches = 0)
+	mplot.savefig(newname, dpi=150, bbox_inches='tight', pad_inches = 0)
 	command = "open " + newname
 	os.system(command)
 
@@ -55,7 +55,7 @@ def process(**kwargs):
 	# open the source image
 	img = Image.open(file)
 	img = ImageOps.expand(img,border=20,fill='white')
-	img = ImageOps.expand(img,border=5,fill='black')
+	#img = ImageOps.expand(img,border=5,fill='black')
 	w, h = img.size
 
 	# uncomment to sharpen image (more points)
@@ -163,16 +163,9 @@ def process(**kwargs):
 	p = PatchCollection(patches,match_original=True)
 	ax.add_collection(p)
 	
-	# plot extracted points
-	#ax.scatter(pts[:,0], pts[:,1], s=1, color='g', alpha=1)
-	#plt.show()
-	
 	return fig
 
 # Start here
 file = sys.argv[1]
-#size = 1
-#for i in range(10):
-fig = process(file=file, blur=0, detail=1, size=1, trialpha=1, random=False, pltdelaunay=False, pltvoronoi=True)
-save_plot(file,fig,"lp")
-#size = size + 2
+fig = process(file=file, blur=0, detail=1, size=1, trialpha=1, random=False, pltdelaunay=True, pltvoronoi=False)
+save_plot(file,fig,"lp"+str(size))
